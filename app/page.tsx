@@ -9,17 +9,36 @@ import TodayForecast from "./components/home/TodayForecast";
 import AirConditions from "./components/home/AirConditions";
 import WeeklyForecast from "./components/home/WeeklyForecast";
 import { normalizeVietnamese } from "@/lib/utils";
+import toast from "react-hot-toast";
 
 export default function Home() {
   const [darkMode, setDarkMode] = useState(false);
   const [city, setCity] = useState("Hồ Chí Minh");
-  const [weather, setWeather] = useState<unknown>(null);
-  const [forecast, setForecast] = useState<unknown>(null);
+  const [weather, setWeather] = useState<any>(null);
+  const [forecast, setForecast] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
+  // ✅ Lấy city & theme từ localStorage khi load
   useEffect(() => {
-    fetchWeather(city);
+    const savedCity = localStorage.getItem("lastCity");
+    const savedTheme = localStorage.getItem("pref-dark");
+
+    if (savedCity) setCity(savedCity);
+    if (savedTheme) setDarkMode(savedTheme === "1");
+
+    // fetch weather sau khi khôi phục city
+    fetchWeather(savedCity || "Hồ Chí Minh");
   }, []);
+
+  // ✅ Lưu theme mỗi khi thay đổi
+  useEffect(() => {
+    localStorage.setItem("pref-dark", darkMode ? "1" : "0");
+  }, [darkMode]);
+
+  // ✅ Lưu city mỗi khi đổi
+  useEffect(() => {
+    if (city) localStorage.setItem("lastCity", city);
+  }, [city]);
 
   async function fetchWeather(cityName: string) {
     try {
@@ -32,15 +51,10 @@ export default function Home() {
 
       setWeather(data.weather);
       setForecast(data.forecast);
-      
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error(err);
-        alert(err.message);
-      } else {
-        console.error(err);
-        alert("An unexpected error occurred");
-      }
+      toast.success(`Loaded weather for ${cityName}`);
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Failed to load weather data");
     } finally {
       setLoading(false);
     }
@@ -49,14 +63,13 @@ export default function Home() {
   return (
     <AnimatePresence mode="wait">
       <motion.main
-        key={darkMode ? "dark" : "light"}
-        initial={{ opacity: 0, scale: 0.98 }}
+        initial={{ opacity: 0, scale: 0.995 }}
         animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.98 }}
-        transition={{ duration: 0.6, ease: "easeInOut" }}
+        exit={{ opacity: 0, scale: 0.995 }}
+        transition={{ duration: 0.45 }}
         className={`min-h-screen flex flex-col md:flex-row transition-colors duration-500 ease-in-out ${darkMode
-            ? "dark bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 text-gray-100"
-            : "bg-[#CFDFEF] text-[#1a1f2b]"
+          ? "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 text-gray-100"
+          : "bg-gradient-to-br from-[#EAF3FF] via-[#D9E6F5] to-[#C9D9EE] text-[#1e293b]"
           }`}
       >
         <Sidebar darkMode={darkMode} setDarkMode={setDarkMode} />
@@ -69,14 +82,18 @@ export default function Home() {
               setCity={setCity}
               onSearch={() => fetchWeather(city)}
             />
-
             {loading ? (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-center text-lg mt-10"
+                className="flex justify-center items-center mt-20"
               >
-                ⏳ Loading weather...
+                <div
+                  className={`w-12 h-12 border-4 rounded-full animate-spin ${darkMode
+                      ? "border-gray-600 border-t-white"
+                      : "border-gray-300 border-t-blue-500"
+                    }`}
+                ></div>
               </motion.div>
             ) : weather ? (
               <>
@@ -85,11 +102,11 @@ export default function Home() {
                 <AirConditions darkMode={darkMode} data={weather} />
               </>
             ) : (
-              <p className="text-center text-gray-500">Search a city</p>
+              <p className="text-center opacity-80">Search a city</p>
             )}
           </div>
 
-          <WeeklyForecast darkMode={darkMode} />
+          <WeeklyForecast darkMode={darkMode} forecast={forecast} />
         </section>
       </motion.main>
     </AnimatePresence>

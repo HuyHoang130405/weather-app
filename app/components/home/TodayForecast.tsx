@@ -1,3 +1,7 @@
+// TodayForecast.tsx
+// Hourly cards use translucent backgrounds and inherit text color.
+"use client";
+import { getWeatherIconClass } from "@/lib/getWeatherIconClass";
 import { motion } from "framer-motion";
 
 interface Props {
@@ -15,10 +19,8 @@ export default function TodayForecast({ darkMode, data }: Props) {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`rounded-2xl p-4 shadow-md ${
-        darkMode ? "bg-slate-800/70" : "bg-white/70"
-      } backdrop-blur`}
+      transition={{ duration: 0.5 }}
+      className="rounded-2xl p-4 shadow-sm bg-white/6 backdrop-blur-sm border border-white/6"
     >
       <h2 className="text-lg font-semibold mb-3">Today’s Forecast</h2>
       <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 text-center">
@@ -26,19 +28,16 @@ export default function TodayForecast({ darkMode, data }: Props) {
           const time = new Date(h.dt * 1000).getHours();
           const temp = Math.round(h.main.temp);
           const icon = h.weather[0].icon;
+          const iconUrl = `https://openweathermap.org/img/wn/${icon}@2x.png`;
+          const filterClass = getWeatherIconClass(iconUrl, darkMode);
 
           return (
-            <div
-              key={i}
-              className={`rounded-xl p-3 ${
-                darkMode ? "bg-slate-700/60" : "bg-blue-100/60"
-              }`}
-            >
-              <p className="text-sm font-medium">{time}:00</p>
+            <div key={i} className="rounded-xl p-3 bg-white/8">
+              <p className="text-sm font-medium opacity-85">{time}:00</p>
               <img
-                src={`https://openweathermap.org/img/wn/${icon}@2x.png`}
+                src={iconUrl}
                 alt="icon"
-                className="w-10 h-10 mx-auto"
+                className={`w-12 h-12 mx-auto ${filterClass}`}
               />
               <p className="font-semibold">{temp}°C</p>
             </div>
