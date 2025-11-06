@@ -11,7 +11,7 @@ export default function WeatherSummary({ darkMode, data }: any) {
       transition={{ duration: 0.45 }}
       className="rounded-2xl p-6 flex flex-col items-center text-center transition-all bg-white/6 backdrop-blur-sm shadow-sm border border-white/6"
     >
-      <h2 className="text-3xl font-bold mb-2">{data?.city ?? "--"}</h2>
+      <h2 className="mbs:text-[28px] mbl:text-3xl font-bold mb-2">{data?.city ?? "--"}</h2>
       <p className="text-sm opacity-80 mb-4">{data?.desc ?? ""}</p>
       <div className="text-7xl mb-2">
         {data?.icon ? (
@@ -24,7 +24,7 @@ export default function WeatherSummary({ darkMode, data }: any) {
           <div className="w-20 h-20" />
         )}
       </div>
-      <p className="text-5xl font-extrabold">{data?.temp ?? "--"}°C</p>
+      <p className="mbs:text-[32px] mbl:text-5xl font-extrabold">{data?.temp ?? "--"}°C</p>
     </motion.div>
   );
 }

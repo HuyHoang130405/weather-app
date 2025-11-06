@@ -9,7 +9,7 @@ export default function WeeklyForecast({ darkMode, forecast }: any) {
   if (!forecast || !forecast.list) {
     return (
       <div className="w-full md:w-64 rounded-2xl p-5 flex flex-col transition-all bg-white/6 backdrop-blur-sm border border-white/6">
-        <h2 className="text-lg font-semibold mb-3">7-Day Forecast</h2>
+        <h3 className="font-semibold mb-3">7-Day Forecast</h3>
         <p className="text-sm opacity-80">No forecast data available</p>
       </div>
     );
@@ -51,7 +51,7 @@ export default function WeeklyForecast({ darkMode, forecast }: any) {
       transition={{ duration: 0.45 }}
       className="w-full md:w-64 rounded-2xl p-5 flex flex-col transition-all bg-white/6 backdrop-blur-sm shadow-sm border border-white/6"
     >
-      <h3 className="font-semibold mb-3">7-Day Forecast</h3>
+      <h3 className="text-lg font-semibold mb-3">7-Day Forecast</h3>
       <div className="flex flex-col gap-2">
         {dailyData.map((d: any, i: number) => (
           <div key={i} className="shadow-sm flex justify-between items-center p-3 rounded-xl bg-white/8">
